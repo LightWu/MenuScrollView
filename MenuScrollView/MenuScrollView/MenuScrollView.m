@@ -32,12 +32,12 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
 @synthesize indicatorTinColor=_indicatorTinColor;
 
 - (void) awakeFromNib {
-    
+    self.showIndicator=YES;
 }
 
 - (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected  titles:(NSArray*)titles {
     if (self=[super initWithFrame:frame]) {
-        
+        self.showIndicator=YES;
         [self setStyle:style type:type selectedType:selected titles:titles];
     }
     return self;
@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
 
 - (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected  images:(NSArray *)images {
     if (self=[super initWithFrame:frame]) {
-        
+        self.showIndicator=YES;
         [self setStyle:style type:type selectedType:selected images:images];
     }
     return self;
@@ -198,7 +198,7 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     [self scrollToCurrentIndex:NO];
     
-    [self setShowIndicator:YES];
+    [self setShowIndicator:self.showIndicator];
 }
 
 - (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected  images:(NSArray *)images {
@@ -339,7 +339,7 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     [self scrollToCurrentIndex:NO];
     
-    [self setShowIndicator:YES];
+    [self setShowIndicator:self.showIndicator];
 }
 
 #pragma mark - Settings
