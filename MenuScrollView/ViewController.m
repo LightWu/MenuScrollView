@@ -33,10 +33,10 @@
     // if storyboard is using size classes, should setup in viewDidAppear.
     
     // setup with titles
-    [menuScrollView setStyle:MSVStyleHorizontal type:MSVTypeTwo titles:@[@"page index 1",@"page index 2",@"page index 3", @"page index 4"]];
+    [menuScrollView setStyle:MSVStyleHorizontal type:MSVTypeTwo selectedType:MSVSelectedType_Middle titles:@[@"page index 1",@"page index 2",@"page index 3", @"page index 4"]];
     
     // setup with images
-//    [menuScrollView setStyle:MSVStyleHorizontal type:MSVTypeTwo images:@[[UIImage imageNamed:@"image.png"], [UIImage imageNamed:@"image.png"], [UIImage imageNamed:@"image.png"], [UIImage imageNamed:@"image.png"]]];
+//    [menuScrollView setStyle:MSVStyleHorizontal type:MSVTypeTwo selectedType:MSVSelectedType_Middle images:@[[UIImage imageNamed:@"image.png"], [UIImage imageNamed:@"image.png"], [UIImage imageNamed:@"image.png"], [UIImage imageNamed:@"image.png"]]];
     
     menuScrollView.delegate=self;
 }

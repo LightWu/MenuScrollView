@@ -21,6 +21,12 @@ typedef NS_ENUM (NSInteger, MenuScrollType) {
     MSVTypeThree    =2,
 };
 
+typedef NS_ENUM(NSInteger, MenuSeletedType) {
+    MSVSelectedType_First   =0,
+    MSVSelectedType_Middle  =1,
+    MSVSelectedType_Last    =2,
+};
+
 @protocol MenuScrollViewDelegate;
 
 NS_CLASS_AVAILABLE_IOS(6_0) @interface MenuScrollView : UIView {
@@ -39,6 +45,8 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface MenuScrollView : UIView {
     
     MenuScrollType scrollType;
     
+    MenuSeletedType selectedType;
+    
 }
 
 @property (assign, nonatomic) id<MenuScrollViewDelegate>delegate;
@@ -49,11 +57,11 @@ NS_CLASS_AVAILABLE_IOS(6_0) @interface MenuScrollView : UIView {
 
 @property (weak, nonatomic) UIColor *indicatorTinColor;
 
-- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type titles:(NSArray*)titles;
-- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type images:(NSArray*)images;
+- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected titles:(NSArray*)titles;
+- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected images:(NSArray*)images;
 
-- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type titles:(NSArray*)titles;
-- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type images:(NSArray*)images;
+- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected titles:(NSArray*)titles;
+- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected images:(NSArray*)images;
 
 @end
 

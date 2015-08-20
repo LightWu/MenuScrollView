@@ -7,6 +7,7 @@
 //
 
 #import "MenuScrollView.h"
+#import "AppDelegate.h"
 
 #define BASE 5000
 
@@ -31,34 +32,35 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
 @synthesize indicatorTinColor=_indicatorTinColor;
 
 - (void) awakeFromNib {
+    
 }
 
-- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type titles:(NSArray*)titles {
+- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected  titles:(NSArray*)titles {
     if (self=[super initWithFrame:frame]) {
         
-        self.backgroundColor=[UIColor whiteColor];
-        [self setStyle:style type:type titles:titles];
+        [self setStyle:style type:type selectedType:selected titles:titles];
     }
     return self;
 }
 
-- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type images:(NSArray *)images {
+- (id) initWithFrame:(CGRect)frame style:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected  images:(NSArray *)images {
     if (self=[super initWithFrame:frame]) {
         
-        self.backgroundColor=[UIColor clearColor];
-        [self setStyle:style type:type images:images];
+        [self setStyle:style type:type selectedType:selected images:images];
     }
     return self;
 }
 
-- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type titles:(NSArray *)titles {
+- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected  titles:(NSArray *)titles {
     
     if (theScrollView!=nil) {
-        [theScrollView removeFromSuperview];
-        theScrollView=nil;
+        for (UIView *view in theScrollView.subviews) {
+            [view removeFromSuperview];
+        }
+    } else {
+        theScrollView=[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
+        theScrollView.autoresizingMask=UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     }
-    
-    theScrollView=[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
     
     maxCount=titles.count;
     
@@ -67,10 +69,19 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     theScrollView.showsVerticalScrollIndicator=NO;
     theScrollView.showsHorizontalScrollIndicator=NO;
+    theScrollView.backgroundColor=[UIColor clearColor];
     
     scrollStyle=style;
     
     [self setType:type];
+    
+    if (type!=MSVTypeThree && selected==MSVSelectedType_Middle) {
+        selectedType=MSVSelectedType_First;
+    } else if (type==MSVTypeSingle && selected!=MSVSelectedType_First) {
+        selectedType=MSVSelectedType_First;
+    } else {
+        selectedType=selected;
+    }
     
     int total = (titles.count<=type+1) ? 0 : BASE;
     
@@ -82,7 +93,13 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
             UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(0, offsetDistance*(i+total/2), CGRectGetWidth(self.frame), offsetDistance)];
             label.text=titles[i];
             label.textAlignment=NSTextAlignmentCenter;
-            label.tag=(i+total/2);
+            label.tag=(i+total/2)+[self getAttachNumber];
+            label.layer.backgroundColor=[UIColor clearColor].CGColor;
+            if (label.tag==targetIndex+[self getAttachNumber]) {
+                label.layer.opacity=1;
+            } else {
+                label.layer.opacity=0.5;
+            }
             label.userInteractionEnabled=YES;
             
             UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
@@ -101,7 +118,13 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
                 UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(0, offsetDistance*(total/2-(titles.count-i)), CGRectGetWidth(self.frame), offsetDistance)];
                 label.text=titles[i];
                 label.textAlignment=NSTextAlignmentCenter;
-                label.tag=(total/2-(titles.count-i));
+                label.tag=(total/2-(titles.count-i))+[self getAttachNumber];
+                label.layer.backgroundColor=[UIColor clearColor].CGColor;
+                if (label.tag==targetIndex+[self getAttachNumber]) {
+                    label.layer.opacity=1;
+                } else {
+                    label.layer.opacity=0.5;
+                }
                 label.userInteractionEnabled=YES;
                 
                 UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
@@ -123,7 +146,13 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
             UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(offsetDistance*(i+total/2), 0, offsetDistance, CGRectGetHeight(self.frame))];
             label.text=titles[i];
             label.textAlignment=NSTextAlignmentCenter;
-            label.tag=(i+total/2);
+            label.tag=(i+total/2)+[self getAttachNumber];
+            label.layer.backgroundColor=[UIColor clearColor].CGColor;
+            if (label.tag==targetIndex+[self getAttachNumber]) {
+                label.layer.opacity=1;
+            } else {
+                label.layer.opacity=0.5;
+            }
             label.userInteractionEnabled=YES;
             
             UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
@@ -142,7 +171,13 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
                 UILabel *label=[[UILabel alloc] initWithFrame:CGRectMake(offsetDistance*(total/2-(titles.count-i)), 0, offsetDistance, CGRectGetHeight(self.frame))];
                 label.text=titles[i];
                 label.textAlignment=NSTextAlignmentCenter;
-                label.tag=(total/2-(titles.count-i));
+                label.tag=(total/2-(titles.count-i))+[self getAttachNumber];
+                label.layer.backgroundColor=[UIColor clearColor].CGColor;
+                if (label.tag==targetIndex+[self getAttachNumber]) {
+                    label.layer.opacity=1;
+                } else {
+                    label.layer.opacity=0.5;
+                }
                 label.userInteractionEnabled=YES;
                 
                 UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
@@ -166,14 +201,16 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     [self setShowIndicator:YES];
 }
 
-- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type images:(NSArray *)images {
+- (void) setStyle:(MenuScrollViewStyle)style type:(MenuScrollType)type selectedType:(MenuSeletedType)selected  images:(NSArray *)images {
     
     if (theScrollView!=nil) {
-        [theScrollView removeFromSuperview];
-        theScrollView=nil;
+        for (UIView *view in theScrollView.subviews) {
+            [view removeFromSuperview];
+        }
+    } else {
+        theScrollView=[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
+        theScrollView.autoresizingMask=UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     }
-    
-    theScrollView=[[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.frame), CGRectGetHeight(self.frame))];
     
     maxCount=images.count;
     
@@ -187,73 +224,111 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     [self setType:type];
     
+    if (type!=MSVTypeThree && selected==MSVSelectedType_Middle) {
+        selectedType=MSVSelectedType_First;
+    } else if (type==MSVTypeSingle && selected!=MSVSelectedType_First) {
+        selectedType=MSVSelectedType_First;
+    } else {
+        selectedType=selected;
+    }
+    
     int total = (images.count<=type+1) ? 0 : BASE;
     
     targetIndex=total/2;
     
+    AppDelegate *appDelegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    
     if (scrollStyle==MSVStyleVertical) {
-        
         for (int i = 0; i < images.count; i++) {
-            UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(0, offsetDistance*(i+total/2), CGRectGetWidth(self.frame), offsetDistance)];
+            
+            UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(0, offsetDistance*(i+total/2+[self getAttachNumber]), CGRectGetWidth(self.frame), offsetDistance)];
+            
             imgView.image=images[i];
-            imgView.tag=(i+total/2);
+            imgView.tag=(i+total/2)+[self getAttachNumber];
+            imgView.layer.backgroundColor=[UIColor clearColor].CGColor;
+            if (imgView.tag==targetIndex+[self getAttachNumber]) {
+                imgView.layer.opacity=1;
+            } else {
+                imgView.layer.opacity=0.5;
+            }
             imgView.userInteractionEnabled=YES;
             
             UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
             tap.numberOfTapsRequired=1;
             [imgView addGestureRecognizer:tap];
             
-            [theScrollView addSubview:imgView];
-            
+            [theScrollView performSelectorOnMainThread:@selector(addSubview:) withObject:imgView waitUntilDone:NO];
         }
         
         if (images.count>(scrollType+1)) {
             
             for (int i = 0; i < images.count; i++) {
-                UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(0, offsetDistance*(total/2-(images.count-i)), CGRectGetWidth(self.frame), offsetDistance)];
+                
+                UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(0, offsetDistance*(total/2-(images.count-i)+[self getAttachNumber]), CGRectGetWidth(self.frame), offsetDistance)];
+                
                 imgView.image=images[i];
-                imgView.tag=(total/2-(images.count-i));
+                imgView.tag=(total/2-(images.count-i))+[self getAttachNumber];
+                imgView.layer.backgroundColor=[UIColor clearColor].CGColor;
+                if (imgView.tag==targetIndex+[self getAttachNumber]) {
+                    imgView.layer.opacity=1;
+                } else {
+                    imgView.layer.opacity=0.5;
+                }
                 imgView.userInteractionEnabled=YES;
                 
                 UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
                 tap.numberOfTapsRequired=1;
                 [imgView addGestureRecognizer:tap];
                 
-                [theScrollView addSubview:imgView];
+                [theScrollView performSelectorOnMainThread:@selector(addSubview:) withObject:imgView waitUntilDone:NO];
             }
         }
         
         theScrollView.contentSize=CGSizeMake(CGRectGetWidth(self.frame), offsetDistance*total);
         
     } else {
-        
         for (int i = 0; i < images.count; i++) {
-            UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(offsetDistance*(i+total/2), 0, offsetDistance, CGRectGetHeight(self.frame))];
+            
+            UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(offsetDistance*(i+total/2+[self getAttachNumber]), 0, offsetDistance, CGRectGetHeight(self.frame))];
+            
             imgView.image=images[i];
-            imgView.tag=(i+total/2);
+            imgView.tag=(i+total/2)+[self getAttachNumber];
+            imgView.layer.backgroundColor=[UIColor clearColor].CGColor;
+            if (imgView.tag==targetIndex+[self getAttachNumber]) {
+                imgView.layer.opacity=1;
+            } else {
+                imgView.layer.opacity=0.5;
+            }
             imgView.userInteractionEnabled=YES;
             
             UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
             tap.numberOfTapsRequired=1;
             [imgView addGestureRecognizer:tap];
             
-            [theScrollView addSubview:imgView];
-            
+            [theScrollView performSelectorOnMainThread:@selector(addSubview:) withObject:imgView waitUntilDone:NO];
         }
         
         if (images.count>(scrollType+1)) {
             
             for (int i = 0; i < images.count; i++) {
-                UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(offsetDistance*(total/2-(images.count-i)), 0, offsetDistance, CGRectGetHeight(self.frame))];
+                
+                UIImageView *imgView=[[UIImageView alloc] initWithFrame:CGRectMake(offsetDistance*(total/2-(images.count-i)+[self getAttachNumber]), 0, offsetDistance, CGRectGetHeight(self.frame))];
+                
                 imgView.image=images[i];
-                imgView.tag=(total/2-(images.count-i));
+                imgView.tag=(total/2-(images.count-i))+[self getAttachNumber];
+                imgView.layer.backgroundColor=[UIColor clearColor].CGColor;
+                if (imgView.tag==targetIndex+[self getAttachNumber]) {
+                    imgView.layer.opacity=1;
+                } else {
+                    imgView.layer.opacity=0.5;
+                }
                 imgView.userInteractionEnabled=YES;
                 
                 UITapGestureRecognizer *tap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
                 tap.numberOfTapsRequired=1;
                 [imgView addGestureRecognizer:tap];
                 
-                [theScrollView addSubview:imgView];
+                [theScrollView performSelectorOnMainThread:@selector(addSubview:) withObject:imgView waitUntilDone:NO];
             }
         }
         
@@ -403,7 +478,7 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
 }
 
 - (void) scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
-//    NSLog(@"scrollViewDidEndScrollingAnimation");
+    NSLog(@"scrollViewDidEndScrollingAnimation");
     
     [self replaceNextView:(int)targetIndex complete:^(BOOL finished) {
         
@@ -485,19 +560,28 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
         
         [theScrollView scrollRectToVisible:CGRectMake(targetIndex*offsetDistance, 0, CGRectGetWidth(theScrollView.frame), CGRectGetHeight(theScrollView.frame)) animated:animated];
     }
+    
+    for (UIView *view in theScrollView.subviews) {
+        if (view.tag==targetIndex+[self getAttachNumber]) {
+            view.layer.opacity=0.5;
+        } else {
+            view.layer.opacity=1;
+        }
+    }
 }
 
 - (void) replaceNextView:(int)currentIndex complete:(void(^)(BOOL finished))complete {
-//    NSLog(@"replaceNextView");
+    NSLog(@"replaceNextView");
     
     if (moveDirection==kMoveDirection_Front) {
         
         for (UIView *view in theScrollView.subviews) {
             
             if (view.tag<currentIndex-maxCount) {
-                
-                view.tag=currentIndex+maxCount-1;
-                
+                view.tag=(currentIndex+maxCount)-(currentIndex-maxCount-view.tag);
+                        // 2502 + 5 - (2502 - 5 - 2495)
+                        // 2507 - (2497-2495)
+                        // 2507 - 2
                 if (scrollStyle==MSVStyleVertical) {
                     view.frame=CGRectMake(0, offsetDistance*view.tag, CGRectGetWidth(view.frame), offsetDistance);
                 } else {
@@ -568,6 +652,27 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     }
     
     [indicatorView setCurrentIndex:index];
+}
+
+- (NSInteger) getAttachNumber {
+    switch (selectedType) {
+        case MSVSelectedType_First:
+            break;
+        case MSVSelectedType_Middle:
+            return 1;
+            break;
+        case MSVSelectedType_Last:
+            if (scrollType==MSVTypeTwo) {
+                return 1;
+            } else if (scrollType==MSVTypeThree) {
+                return 2;
+            }
+            break;
+        default:
+            break;
+    }
+    
+    return 0;
 }
 
 #pragma mark - 
