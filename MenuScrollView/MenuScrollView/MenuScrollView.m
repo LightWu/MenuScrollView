@@ -535,7 +535,7 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     UIView *view=tapGestureRecognizer.view;
     
-    targetIndex=view.tag;
+    targetIndex=view.tag-[self getAttachNumber];
     
     [self scrollToCurrentIndex:YES];
     
