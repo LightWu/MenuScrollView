@@ -75,15 +75,19 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     [self setType:type];
     
-    if (type!=MSVTypeThree && selected==MSVSelectedType_Middle) {
-        selectedType=MSVSelectedType_First;
-    } else if (type==MSVTypeSingle && selected!=MSVSelectedType_First) {
+    int total = (titles.count<=type+1) ? 0 : BASE;
+    
+    if (total==0) {
         selectedType=MSVSelectedType_First;
     } else {
-        selectedType=selected;
+        if (type!=MSVTypeThree && selected==MSVSelectedType_Middle) {
+            selectedType=MSVSelectedType_First;
+        } else if (type==MSVTypeSingle && selected!=MSVSelectedType_First) {
+            selectedType=MSVSelectedType_First;
+        } else {
+            selectedType=selected;
+        }
     }
-    
-    int total = (titles.count<=type+1) ? 0 : BASE;
     
     targetIndex=total/2;
     
@@ -224,19 +228,21 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     [self setType:type];
     
-    if (type!=MSVTypeThree && selected==MSVSelectedType_Middle) {
-        selectedType=MSVSelectedType_First;
-    } else if (type==MSVTypeSingle && selected!=MSVSelectedType_First) {
-        selectedType=MSVSelectedType_First;
-    } else {
-        selectedType=selected;
-    }
-    
     int total = (images.count<=type+1) ? 0 : BASE;
     
-    targetIndex=total/2;
+    if (total==0) {
+        selectedType=MSVSelectedType_First;
+    } else {
+        if (type!=MSVTypeThree && selected==MSVSelectedType_Middle) {
+            selectedType=MSVSelectedType_First;
+        } else if (type==MSVTypeSingle && selected!=MSVSelectedType_First) {
+            selectedType=MSVSelectedType_First;
+        } else {
+            selectedType=selected;
+        }
+    }
     
-    AppDelegate *appDelegate=(AppDelegate*)[[UIApplication sharedApplication] delegate];
+    targetIndex=total/2;
     
     if (scrollStyle==MSVStyleVertical) {
         for (int i = 0; i < images.count; i++) {
