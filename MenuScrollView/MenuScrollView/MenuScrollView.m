@@ -73,7 +73,11 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     scrollStyle=style;
     
-    [self setType:type];
+    if (titles.count<type+1) {
+        [self setType:type-1];
+    } else {
+        [self setType:type];
+    }
     
     int total = (titles.count<=type+1) ? 0 : BASE;
     
@@ -226,7 +230,11 @@ typedef NS_ENUM(NSInteger, MoveDirection) {
     
     scrollStyle=style;
     
-    [self setType:type];
+    if (images.count<type+1) {
+        [self setType:type-1];
+    } else {
+        [self setType:type];
+    }
     
     int total = (images.count<=type+1) ? 0 : BASE;
     
